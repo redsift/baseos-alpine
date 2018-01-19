@@ -8,7 +8,7 @@ ENV HOME /root
 
 # s6 overlay
 RUN apk --update upgrade \
- && apk add --no-cache bash openssl rsyslog rsyslog-tls inotify-tools iproute2 ca-certificates curl ncurses \
+ && apk add --no-cache bash openssl inotify-tools iproute2 ca-certificates curl ncurses \
  && curl -sL https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz -o /tmp/s6-overlay.tar.gz \
  && tar xvfz /tmp/s6-overlay.tar.gz -C / \
  && rm -f /tmp/s6-overlay.tar.gz \
@@ -36,10 +36,6 @@ RUN apk add --no-cache build-base cmake \
 RUN mv /usr/local/lib64/* /usr/local/lib \
     && rm -Rf /usr/local/lib64 \
     && ln -s /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc
-
-ADD https://papertrailapp.com/tools/papertrail-bundle.pem /etc/papertrail-bundle.pem
-
-RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c /etc/papertrail-bundle.pem.md5
 
 # Prompt and shell settings
 
