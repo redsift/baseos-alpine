@@ -1,7 +1,7 @@
 machine:
   environment:
     CONTAINER_NAME: quay.io/redsift/baseos-alpine
-    CIRCLE_REVERSE_DEPENDENCIES: haproxy buildos-go-alpine
+    CIRCLE_REVERSE_DEPENDENCIES: buildos-go-alpine
   services:
     - docker
 
