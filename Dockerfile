@@ -1,7 +1,7 @@
 FROM alpine:3.8
 MAINTAINER Deepak Prabhakara email: deepak@redsift.io version: 2.1.102
 
-ENV S6_VERSION=v1.21.7.0 NANO_MSG=1.1.2
+ENV S6_VERSION=v1.18.1.5 NANO_MSG=1.1.2
 
 # Set home
 ENV HOME /root
