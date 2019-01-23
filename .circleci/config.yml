@@ -1,0 +1,51 @@
+version: 2
+
+jobs:
+  build:
+    environment: &project_env
+      CONTAINER_NAME: quay.io/redsift/baseos-alpine
+      CIRCLE_REVERSE_DEPENDENCIES: 
+
+    machine:
+      enabled: true
+
+    steps:
+      - checkout
+      - run:
+          name: Log in to quay.io
+          command: |
+            cat <(echo ${QUAY_PASS}) | docker login -u ${QUAY_USER} --password-stdin -- quay.io
+      - run:
+          name: Build container
+          command: |
+            VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
+            docker build -t ${CONTAINER_NAME} -f Dockerfile .
+            docker tag ${CONTAINER_NAME}:latest ${CONTAINER_NAME}:${VERSION}
+            docker tag ${CONTAINER_NAME}:latest ${CONTAINER_NAME}:${CIRCLE_BRANCH}
+      - run:
+          name: Test container
+          command: |
+            docker run -d ${CONTAINER_NAME}
+            sleep 5
+      - run:
+          name: Push container to the registry
+          command: |
+            docker push ${CONTAINER_NAME}
+      - run:
+          name: Trigger builds of dependent projects
+          command: |
+            PROJECTS=( ${CIRCLE_REVERSE_DEPENDENCIES} )
+            for PROJECT in "${PROJECTS[@]}"; do
+              echo "\"${PROJECT}\""
+              curl -X POST \
+                --header 'Content-Type: application/json' \
+                -d '{"branch":"master"}' \
+                https://circleci.com/api/v1.1/project/github/redsift/${PROJECT}/build?circle-token=${CIRCLE_TOKEN}
+            done
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          context: org-global
