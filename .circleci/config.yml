@@ -4,17 +4,15 @@ jobs:
   build:
     environment: &project_env
       CONTAINER_NAME: quay.io/redsift/baseos-alpine
-      CIRCLE_REVERSE_DEPENDENCIES: 
+      CIRCLE_REVERSE_DEPENDENCIES: buildos-go-alpine
 
-    machine:
-      enabled: true
+    docker:
+      - image: docker:18.09.4-git
 
     steps:
       - checkout
-      - run:
-          name: Log in to quay.io
-          command: |
-            cat <(echo ${QUAY_PASS}) | docker login -u ${QUAY_USER} --password-stdin -- quay.io
+      - setup_remote_docker
+      - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
       - run:
           name: Build container
           command: |
