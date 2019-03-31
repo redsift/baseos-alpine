@@ -32,6 +32,7 @@ jobs:
       - run:
           name: Trigger builds of dependent projects
           command: |
+            apk add curl
             PROJECTS=${CIRCLE_REVERSE_DEPENDENCIES}
             for PROJECT in ${PROJECTS}; do
               echo "\"${PROJECT}\""
