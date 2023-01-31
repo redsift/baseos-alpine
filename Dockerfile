@@ -1,6 +1,4 @@
-FROM alpine:3.13
-
-LABEL maintainer="Deepak Prabhakara <deepak@redsift.io>"
+FROM alpine:3.17
 
 # Install rocksdb library
 COPY --from=quay.io/redsift/alpine-rocksdb /usr/lib/librocksdb.a /usr/lib/
