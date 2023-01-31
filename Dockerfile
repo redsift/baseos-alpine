@@ -37,9 +37,7 @@ RUN apk add --no-cache build-base cmake \
 
 # Due to 0.9 rename to nanomsg, some older bindings break so alias nanomsg.pc to libnanomsg.pc - should be removed later
 # Can't make CMAKE_INSTALL_LIBDIR point to the right place
-RUN mv /usr/local/lib64/* /usr/local/lib \
-    && rm -Rf /usr/local/lib64 \
-    && ln -s /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc
+RUN ln -s /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc
 
 # Prompt and shell settings
 
