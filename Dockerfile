@@ -1,4 +1,5 @@
-FROM alpine:3.17
+ARG VERSION
+FROM alpine:${VERSION}
 
 # Install rocksdb library
 COPY --from=quay.io/redsift/alpine-rocksdb /usr/lib/librocksdb.a /usr/lib/

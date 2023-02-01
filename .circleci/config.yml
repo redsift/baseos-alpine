@@ -5,9 +5,10 @@ jobs:
     environment: &project_env
       CONTAINER_NAME: quay.io/redsift/baseos-alpine
       CIRCLE_REVERSE_DEPENDENCIES: buildos-go-alpine
+      UPSTREAM_VERSION: "3.17"
 
     docker:
-      - image: docker:18.09.4-git
+      - image: cimg/base:2023.01
 
     steps:
       - checkout
@@ -17,22 +18,24 @@ jobs:
           name: Build container
           command: |
             VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
-            docker build -t ${CONTAINER_NAME} -f Dockerfile .
-            docker tag ${CONTAINER_NAME}:latest ${CONTAINER_NAME}:${VERSION}
-            docker tag ${CONTAINER_NAME}:latest ${CONTAINER_NAME}:${CIRCLE_BRANCH}
+            docker build --build-arg=VERSION=$UPSTREAM_VERSION -t ${CONTAINER_NAME} -f Dockerfile .
+            for TAG in $VERSION $CIRCLE_BRANCH $UPSTREAM_VERSION; do
+              docker tag ${CONTAINER_NAME}:latest ${CONTAINER_NAME}:${TAG}
+            done
+
       - run:
           name: Test container
           command: |
-            docker run -d ${CONTAINER_NAME}
-            sleep 5
+            docker run --entrypoint=sh -d ${CONTAINER_NAME} true
+
       - run:
           name: Push container to the registry
           command: |
             docker push ${CONTAINER_NAME}
+
       - run:
           name: Trigger builds of dependent projects
           command: |
-            apk add curl
             PROJECTS=${CIRCLE_REVERSE_DEPENDENCIES}
             for PROJECT in ${PROJECTS}; do
               echo "\"${PROJECT}\""
