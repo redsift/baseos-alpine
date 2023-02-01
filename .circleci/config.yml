@@ -31,7 +31,7 @@ jobs:
       - run:
           name: Push container to the registry
           command: |
-            docker push ${CONTAINER_NAME}
+            docker push -q -a ${CONTAINER_NAME}
 
       - run:
           name: Trigger builds of dependent projects
