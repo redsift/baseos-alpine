@@ -2,7 +2,7 @@ ARG VERSION
 FROM alpine:${VERSION}
 
 # Install rocksdb library
-COPY --from=quay.io/redsift/alpine-rocksdb /usr/lib/librocksdb.a /usr/lib/
+COPY --from=quay.io/redsift/alpine-rocksdb:${VERSION} /usr/lib/librocksdb.a /usr/lib/
 
 # Set home
 ENV HOME /root
