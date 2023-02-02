@@ -1,8 +1,12 @@
 ARG VERSION
+
+# set up alias, as COPY does not accept this format
+FROM quay.io/redsift/alpine-rocksdb:${VERSION} AS rocksdb
+
 FROM alpine:${VERSION}
 
 # Install rocksdb library
-COPY --from=quay.io/redsift/alpine-rocksdb:${VERSION} /usr/lib/librocksdb.a /usr/lib/
+COPY --from=rocksdb /usr/lib/librocksdb.a /usr/lib/
 
 # Set home
 ENV HOME /root
